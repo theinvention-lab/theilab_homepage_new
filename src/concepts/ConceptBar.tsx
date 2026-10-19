@@ -22,7 +22,7 @@ export default function ConceptBar() {
           </NavLink>
         ))}
         <Link to="/" className="concept-bar__tab">
-          Apple
+          Main
         </Link>
       </div>
       <div className="concept-bar__lang">

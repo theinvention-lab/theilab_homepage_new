@@ -32,13 +32,13 @@ export default function Concepts() {
           ))}
           <Link to="/" className="concept-card concept-card--apple">
             <div className="concept-card__preview" aria-hidden>
-              <span>Apple</span>
+              <span>Minimal</span>
             </div>
             <div className="concept-card__body">
               <span className="concept-card__no">CURRENT</span>
-              <h3>Apple</h3>
+              <h3>Main · Minimal</h3>
               <strong>현재 멀티페이지 사이트</strong>
-              <p>밝은 배경과 큰 타이포그래피, 반투명 내비게이션의 다중 페이지 구성 (기본 사이트)</p>
+              <p>흰 배경과 블랙 타이포, 얇은 구분선과 리스트 중심의 미니멀 VC 스타일 다중 페이지 구성 (기본 사이트)</p>
               <span className="more">
                 사이트 보기 <Arrow />
               </span>
