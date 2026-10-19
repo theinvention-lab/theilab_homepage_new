@@ -133,10 +133,12 @@ export function Stats({ items }: { items: { value: string; label: string }[] }) 
   )
 }
 
-export function Body({ children, cols = 2, drop = false }: { children: ReactNode; cols?: 1 | 2 | 3; drop?: boolean }) {
+export function Body({ children, text, cols = 2, drop = false }: { children?: ReactNode; text?: string; cols?: 1 | 2 | 3; drop?: boolean }) {
+  // 짧은 글은 다단 대신 단일 단으로 (드롭캡 + 다단 균형 버그 방지)
+  const c = cols > 1 && text !== undefined && text.length < 260 ? 1 : cols
   return (
-    <div className={`ed-body ed-body--c${cols}${drop ? ' ed-drop' : ''}`} data-reveal>
-      {children}
+    <div className={`ed-body ed-body--c${c}${drop ? ' ed-drop' : ''}`} data-reveal>
+      {text !== undefined ? <p>{text}</p> : children}
     </div>
   )
 }

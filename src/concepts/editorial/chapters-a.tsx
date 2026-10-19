@@ -10,11 +10,8 @@ export function Manifesto() {
   const { pick } = useLang()
   const nums = [keyNumbers.aum, keyNumbers.funds, keyNumbers.portfolio, keyNumbers.tips, keyNumbers.lips, keyNumbers.since]
   return (
-    <section className="ed-chapter" aria-labelledby="ch1-title">
+    <section className="ed-chapter" aria-label="Manifesto">
       <ChapterOpener id="ch1" no="01" name="Manifesto" kicker={home.journeyEyebrow} title={pick(home.journeyTitle)} />
-      <span id="ch1-title" hidden>
-        Manifesto
-      </span>
 
       <div className="ed-journey">
         <aside className="ed-journey__side" data-reveal>
@@ -82,9 +79,7 @@ export function Factory() {
       <ChapterOpener id="ch2" no="02" name="The Factory" kicker={studio.eyebrow} title={studio.title} dek={pick(studio.desc)} />
 
       <SectionHead no="2.1" title={studio.factoryTitle} />
-      <Body cols={2} drop>
-        <p>{pick(studio.factoryDesc)}</p>
-      </Body>
+      <Body cols={2} drop text={pick(studio.factoryDesc)} />
 
       <ol className="ed-line" aria-label={studio.factoryTitle} data-reveal>
         {studio.factory.map((f, i) => (
@@ -276,9 +271,7 @@ export function Disciplines() {
         <p className="ed-standfirst" data-reveal>
           {newBiz.introTitle}
         </p>
-        <Body cols={2} drop>
-          <p>{pick(newBiz.introDesc)}</p>
-        </Body>
+        <Body cols={2} drop text={pick(newBiz.introDesc)} />
         <Stats items={newBiz.stats.map((s) => ({ value: s.value, label: pick(s.label) }))} />
 
         <aside className="ed-box" data-reveal>
@@ -308,15 +301,11 @@ export function Disciplines() {
         <p className="ed-standfirst" data-reveal>
           {pick(scaleup.introTitle)}
         </p>
-        <Body cols={2} drop>
-          <p>{pick(scaleup.introDesc)}</p>
-        </Body>
+        <Body cols={2} drop text={pick(scaleup.introDesc)} />
         <Stats items={scaleup.stats.map((s) => ({ value: s.value, label: pick(s.label) }))} />
 
         <SectionHead no="B.1" title={pick(scaleup.scoutingTitle)} lead={pick(scaleup.scoutingLead)} />
-        <Body cols={1}>
-          <p>{pick(scaleup.scoutingDesc)}</p>
-        </Body>
+        <Body cols={1} text={pick(scaleup.scoutingDesc)} />
         <div className="ed-trio" data-reveal>
           {scaleup.scouting.map((s, i) => (
             <div key={i} className="ed-trio__col">
@@ -332,9 +321,7 @@ export function Disciplines() {
         </div>
 
         <SectionHead no="B.2" title={pick(scaleup.blendedTitle)} lead={pick(scaleup.blendedLead)} />
-        <Body cols={1}>
-          <p>{pick(scaleup.blendedDesc)}</p>
-        </Body>
+        <Body cols={1} text={pick(scaleup.blendedDesc)} />
         <div className="ed-trio" data-reveal>
           {scaleup.benefits.map((b, i) => (
             <div key={i} className="ed-trio__col">
@@ -431,9 +418,7 @@ export function Disciplines() {
         <p className="ed-standfirst" data-reveal>
           {pick(partnership.introTitle)}
         </p>
-        <Body cols={2} drop>
-          <p>{pick(partnership.introDesc)}</p>
-        </Body>
+        <Body cols={2} drop text={pick(partnership.introDesc)} />
         <Stats items={partnership.stats.map((s) => ({ value: s.value, label: pick(s.label) }))} />
 
         <div className="ed-progs">
