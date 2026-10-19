@@ -1,3 +1,4 @@
+import type { L10n } from '../../i18n'
 import { useLang } from '../../i18n'
 import { globalX, home, keyNumbers } from '../../data/copy'
 import { featuredStudioIds, projectById } from '../../data/projects'
@@ -9,13 +10,13 @@ export default function Hero() {
   const { open, goContact } = useBento()
   const latest = news[0]
   const irr = globalX.stats[1]
-  const kpis = [
-    { ...keyNumbers.aum, tone: 'butter', big: true },
-    { ...keyNumbers.portfolio, tone: 'mint' },
-    { value: irr.value, label: irr.label, tone: 'sky' },
-    { ...keyNumbers.tips, tone: 'lilac' },
-    { ...keyNumbers.lips, tone: 'peach' },
-    { ...keyNumbers.funds, tone: 'plain' },
+  const kpis: { value: string; label: L10n; tone: string; area: string; big?: boolean }[] = [
+    { ...keyNumbers.aum, tone: 'butter', big: true, area: 'aum' },
+    { ...keyNumbers.portfolio, tone: 'mint', area: 'pf' },
+    { value: irr.value, label: irr.label, tone: 'sky', area: 'irr' },
+    { ...keyNumbers.tips, tone: 'lilac', area: 'tips' },
+    { ...keyNumbers.lips, tone: 'peach', area: 'lips' },
+    { ...keyNumbers.funds, tone: 'plain', area: 'funds' },
   ]
 
   return (
@@ -46,7 +47,7 @@ export default function Hero() {
         </div>
 
         {kpis.map((k, i) => (
-          <div key={i} className={`be-tile be-kpi be-tone--${k.tone}` + (k.big ? ' be-kpi--big' : '')}>
+          <div key={i} style={{ gridArea: k.area }} className={`be-tile be-kpi be-tone--${k.tone}` + (k.big ? ' be-kpi--big' : '')}>
             <span className="be-kpi__no">{String(i + 1).padStart(2, '0')}</span>
             <strong className="be-kpi__value">{k.value}</strong>
             <span className="be-kpi__label">{pick(k.label)}</span>
@@ -103,6 +104,7 @@ export default function Hero() {
             </span>
             {latest.category && <span className="be-kicker">{newsCategoryLabel[latest.category]}</span>}
             <strong className="be-hero__news-title">{latest.title}</strong>
+            {latest.summary && <span className="be-hero__news-sum">{latest.summary.split(' / ')[0]}</span>}
             <span className="be-link">
               {t('자세히 보기', 'Read more')} <Arrow />
             </span>
