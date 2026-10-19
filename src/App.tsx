@@ -16,6 +16,12 @@ import Insights from './pages/Insights'
 import PressDetail from './pages/PressDetail'
 import Contact from './pages/Contact'
 import NotFound from './pages/NotFound'
+import Concepts from './pages/Concepts'
+import ConceptBar from './concepts/ConceptBar'
+import './concepts/concept-bar.css'
+import EditorialConcept from './concepts/editorial'
+import TerminalConcept from './concepts/terminal'
+import BentoConcept from './concepts/bento'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -26,6 +32,21 @@ function ScrollToTop() {
 }
 
 export default function App() {
+  const { pathname } = useLocation()
+  if (pathname.startsWith('/c/')) {
+    return (
+      <>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/c/editorial" element={<EditorialConcept />} />
+          <Route path="/c/terminal" element={<TerminalConcept />} />
+          <Route path="/c/bento" element={<BentoConcept />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <ConceptBar />
+      </>
+    )
+  }
   return (
     <>
       <ScrollToTop />
@@ -45,6 +66,7 @@ export default function App() {
           <Route path="/insights" element={<Insights />} />
           <Route path="/insights/press/:id" element={<PressDetail />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/concepts" element={<Concepts />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

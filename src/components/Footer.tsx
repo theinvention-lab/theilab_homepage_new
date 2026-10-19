@@ -65,6 +65,7 @@ export default function Footer() {
         <div className="container footer__bottom">
           <span>© 2025 The Invention Lab. All rights reserved.</span>
           <span className="footer__social">
+            <Link to="/concepts">Design Concepts</Link>
             <MaybeLink href={site.links.facebook}>Facebook</MaybeLink>
             <MaybeLink href={site.links.youtube}>Youtube</MaybeLink>
           </span>
