@@ -162,7 +162,6 @@ button:hover .arrow {
   border-bottom: 1px solid currentColor;
   padding-bottom: 2px;
   line-height: 1.3;
-  width: fit-content;
 }
 .m-link--muted {
   color: var(--ink-3);
@@ -772,24 +771,20 @@ a:hover > .more {
 /* ───────────────────────── Manifesto hero ───────────────────────── */
 .mh {
   position: relative;
-  height: 340vh;
+  height: 360vh;
   --p: 0;
+  --intro: 0;
 }
 .mh__sticky {
+  /* 타이틀 위치 계산(offsetLeft/Top)의 기준 */
   position: sticky;
   top: 0;
   height: 100vh;
   height: 100svh;
   overflow: hidden;
-}
-.mh__canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  background: #fff;
 }
 .mh__inner {
-  position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -797,33 +792,15 @@ a:hover > .more {
   padding-top: calc(var(--nav-h) + 16px);
   padding-bottom: 64px;
 }
-.mh__eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--ink-2);
-  margin-bottom: min(28px, 3vh);
-}
-.mh__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  animation: mh-pulse 2.4s ease-in-out infinite;
-}
-@keyframes mh-pulse {
-  50% {
-    box-shadow: 0 0 0 6px rgba(232, 50, 43, 0.18);
-  }
-}
 .mh__title {
   font-size: clamp(40px, min(7.6vw, 10.5vh), 124px);
   font-weight: 600;
   line-height: 0.98;
   letter-spacing: -0.055em;
   max-width: 1100px;
+  align-self: flex-start;
+  transform-origin: 0 0;
+  will-change: transform;
 }
 .mh__line {
   display: block;
@@ -831,7 +808,7 @@ a:hover > .more {
 .mh__tw {
   display: inline-block;
   white-space: pre;
-  animation: mh-rise 0.9s var(--ease) both;
+  animation: mh-rise 1s var(--ease) both;
 }
 .mh__tw.is-key {
   color: var(--accent);
@@ -841,6 +818,13 @@ a:hover > .more {
     opacity: 0;
     transform: translateY(0.35em);
   }
+}
+.mh__reveal {
+  opacity: var(--intro);
+  transform: translateY(calc((1 - var(--intro)) * 32px));
+}
+html[data-intro='1'] .mh__reveal {
+  pointer-events: none;
 }
 .mh__text {
   --lit: 0;
@@ -866,26 +850,23 @@ a:hover > .more {
   align-items: center;
   gap: 28px;
   flex-wrap: wrap;
-  opacity: clamp(0, calc((var(--p) - 0.7) * 5), 1);
-  transform: translateY(calc((1 - clamp(0, calc((var(--p) - 0.7) * 5), 1)) * 16px));
+  opacity: clamp(0, calc((var(--p) - 0.74) * 5), 1);
+  transform: translateY(calc((1 - clamp(0, calc((var(--p) - 0.74) * 5), 1)) * 16px));
 }
+/* 첫 화면 하단 중앙의 스크롤 안내선 */
 .mh__scroll {
   position: absolute;
-  left: var(--gutter);
-  bottom: 28px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  opacity: calc(1 - var(--p) * 4);
+  left: 50%;
+  bottom: 32px;
+  transform: translateX(-50%);
+  opacity: calc(1 - var(--intro) * 1.6);
+  pointer-events: none;
 }
 .mh__scroll i {
   position: relative;
-  width: 64px;
-  height: 1px;
+  display: block;
+  width: 1px;
+  height: 56px;
   background: var(--line);
   overflow: hidden;
 }
@@ -893,28 +874,40 @@ a:hover > .more {
   content: '';
   position: absolute;
   inset: 0;
-  width: 24px;
+  height: 20px;
   background: var(--accent);
   animation: mh-scroll 1.8s var(--ease) infinite;
 }
 @keyframes mh-scroll {
   from {
-    transform: translateX(-24px);
+    transform: translateY(-20px);
   }
   to {
-    transform: translateX(64px);
+    transform: translateY(56px);
   }
+}
+/* 인트로 동안 헤더 숨김 */
+.header {
+  transition: border-color 0.3s, opacity 0.5s var(--ease), transform 0.5s var(--ease);
+}
+html[data-intro='1'] .header {
+  opacity: 0;
+  transform: translateY(-12px);
+  pointer-events: none;
 }
 @media (prefers-reduced-motion: reduce) {
   .mh__tw,
-  .mh__dot,
   .mh__scroll i::after {
     animation: none;
+  }
+  .mh__reveal,
+  .header {
+    transition: none;
   }
 }
 @media (max-width: 600px) {
   .mh {
-    height: 300vh;
+    height: 320vh;
   }
   .mh__title {
     font-size: clamp(44px, 12.5vw, 64px);

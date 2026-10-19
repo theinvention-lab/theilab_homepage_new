@@ -1,207 +1,159 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang } from '../i18n'
 import { home, studio } from '../data/copy'
 import { Arrow } from './ui'
 
 /** 빨간색으로 강조할 키워드 (색만 바꾸며 문구는 원문 그대로) */
-const KEY = /^(Venture|Studio|Studio로서|벤처|빌딩|구조와|과정으로|체계적으로|ventures|structure|process,|Venture-?Building)/i
+const KEY = /^(Venture|Studio|Studio로서|벤처|빌딩|구조와|과정으로|체계적으로|ventures|structure|process,)/i
+
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v))
+const ease = (t: number) => 1 - Math.pow(1 - t, 3)
 
 /**
- * 스크롤에 따라 문장이 한 단어씩 채워지는 매니페스토형 히어로.
- * 섹션 높이만큼 스크롤하는 동안 내부가 화면에 고정(sticky)되고,
- * 진행도(--lit)에 따라 각 단어의 진하기가 바뀝니다.
+ * 1) 첫 화면: 흰 배경 정중앙에 영문 타이틀만 표시 (헤더 숨김)
+ * 2) 스크롤: 타이틀이 좌상단 본래 자리로 이동하며 메인 화면이 드러남
+ * 3) 계속 스크롤: 매니페스토 문장이 한 단어씩 채워지고 CTA가 나타남
  */
 export default function ManifestoHero() {
   const { pick, t } = useLang()
   const sectionRef = useRef<HTMLElement>(null)
+  const stickyRef = useRef<HTMLDivElement>(null)
+  const titleRef = useRef<HTMLHeadingElement>(null)
   const textRef = useRef<HTMLDivElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const statements = [
     pick(home.sub),
     t('더인벤션랩은 우연이 아닌 구조와 과정으로 스타트업을 만듭니다.', 'The Invention Lab builds ventures through structure and process, not chance.'),
     pick(studio.desc),
   ]
-  const words = statements.flatMap((s, si) => s.split(/\s+/).map((w, wi) => ({ w, si, wi })))
+  const words = statements.flatMap((s, si) => s.split(/\s+/).map((w) => ({ w, si })))
   const total = words.length
 
-  // 스크롤 진행도 → --lit / --p
-  useEffect(() => {
+  useLayoutEffect(() => {
     const section = sectionRef.current
+    const sticky = stickyRef.current
+    const title = titleRef.current
     const text = textRef.current
-    if (!section || !text) return
+    if (!section || !sticky || !title || !text) return
+    const root = document.documentElement
     let raf = 0
+    // 변형 전 타이틀의 실제 글자 영역 (리사이즈/폰트 로딩 때만 측정)
+    const box = { x: 0, y: 0, w: 1, h: 1 }
+    const measure = () => {
+      const prev = title.style.transform
+      title.style.transform = 'none'
+      const base = sticky.getBoundingClientRect()
+      // 가로는 단어(가장 긴 줄의 끝), 세로는 타이틀 박스 기준 (단어 등장 애니메이션 영향 제외)
+      let r = -Infinity
+      title.querySelectorAll<HTMLElement>('.mh__tw').forEach((el) => {
+        r = Math.max(r, el.getBoundingClientRect().right)
+      })
+      const tb = title.getBoundingClientRect()
+      box.x = tb.left - base.left
+      box.y = tb.top - base.top
+      box.w = Math.max(1, r - tb.left)
+      box.h = Math.max(1, tb.height)
+      title.style.transform = prev
+    }
+
     const update = () => {
       raf = 0
       const rect = section.getBoundingClientRect()
       const range = section.offsetHeight - window.innerHeight
-      const p = range > 0 ? Math.min(1, Math.max(0, -rect.top / range)) : 1
-      // 0.08 ~ 0.82 구간에서 단어가 채워짐
-      const lit = Math.min(1, Math.max(0, (p - 0.08) / 0.74)) * (total + 2)
+      const p = range > 0 ? clamp01(-rect.top / range) : 1
+
+      // ① 인트로 → 메인 (0 ~ 0.16): 정중앙 → 본래 자리
+      const intro = ease(clamp01(p / 0.16))
+      const W = sticky.clientWidth
+      const H = sticky.clientHeight
+      const scale0 = Math.min(1.12, (W * 0.86) / box.w)
+      const dx = (W - box.w * scale0) / 2 - box.x
+      const dy = (H - box.h * scale0) / 2 - box.y
+      const k = 1 - intro
+      title.style.transform = `translate(${(dx * k).toFixed(1)}px, ${(dy * k).toFixed(1)}px) scale(${(1 + (scale0 - 1) * k).toFixed(4)})`
+
+      // ② 단어 채우기 (0.24 ~ 0.84)
+      const lit = clamp01((p - 0.24) / 0.6) * (total + 2)
       text.style.setProperty('--lit', lit.toFixed(2))
+      section.style.setProperty('--intro', intro.toFixed(3))
       section.style.setProperty('--p', p.toFixed(3))
+
+      // 인트로 동안 헤더 숨김
+      if (p < 0.06) root.setAttribute('data-intro', '1')
+      else root.removeAttribute('data-intro')
     }
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update)
     }
+    const onResize = () => {
+      measure()
+      onScroll()
+    }
+    measure()
     update()
     window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
+    window.addEventListener('resize', onResize)
+    // 웹폰트 로딩 후 크기 재계산
+    document.fonts?.ready.then(onResize).catch(() => {})
     return () => {
       window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
+      window.removeEventListener('resize', onResize)
       if (raf) cancelAnimationFrame(raf)
+      root.removeAttribute('data-intro')
     }
   }, [total])
 
-  // 배경 그래픽: 숨 쉬듯 일렁이는 빨간 동심원
+  // 언어 변경 시 레이아웃 재계산
   useEffect(() => {
-    const canvas = canvasRef.current
-    const section = sectionRef.current
-    if (!canvas || !section) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    let raf = 0
-    let visible = true
-    let w = 0
-    let h = 0
-    const dpr = Math.min(window.devicePixelRatio || 1, 2)
-
-    const resize = () => {
-      w = canvas.clientWidth
-      h = canvas.clientHeight
-      canvas.width = w * dpr
-      canvas.height = h * dpr
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-    }
-
-    const draw = (time: number) => {
-      const p = parseFloat(getComputedStyle(section).getPropertyValue('--p') || '0') || 0
-      const tt = time / 1000
-      ctx.clearRect(0, 0, w, h)
-      const mobile = w < 700
-      const cx = mobile ? w * 0.72 : w * 0.76
-      const cy = mobile ? h * 0.3 : h * 0.46
-      const base = Math.min(w, h) * (mobile ? 0.34 : 0.3) * (1 + p * 0.5)
-
-      // 부드러운 붉은 광원
-      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, base * 1.6)
-      g.addColorStop(0, 'rgba(232, 50, 43, 0.22)')
-      g.addColorStop(0.5, 'rgba(232, 50, 43, 0.08)')
-      g.addColorStop(1, 'rgba(232, 50, 43, 0)')
-      ctx.fillStyle = g
-      ctx.beginPath()
-      ctx.arc(cx, cy, base * 1.6, 0, Math.PI * 2)
-      ctx.fill()
-
-      // 일렁이는 링
-      const rings = 14
-      for (let r = 0; r < rings; r++) {
-        const k = r / rings
-        const radius = base * (0.25 + k * 1.05)
-        ctx.beginPath()
-        const steps = 120
-        for (let s = 0; s <= steps; s++) {
-          const a = (s / steps) * Math.PI * 2
-          const wob =
-            Math.sin(a * 3 + tt * 0.9 + r * 0.45) * 0.035 +
-            Math.sin(a * 5 - tt * 0.6 + r * 0.3) * 0.02 +
-            Math.sin(tt * 0.8 + r * 0.6) * 0.015
-          const rr = radius * (1 + wob)
-          const x = cx + Math.cos(a) * rr
-          const y = cy + Math.sin(a) * rr
-          if (s === 0) ctx.moveTo(x, y)
-          else ctx.lineTo(x, y)
-        }
-        ctx.closePath()
-        ctx.strokeStyle = `rgba(232, 50, 43, ${0.55 - k * 0.42})`
-        ctx.lineWidth = r === 0 ? 1.6 : 1
-        ctx.stroke()
-      }
-
-      // 중심 점
-      ctx.beginPath()
-      ctx.arc(cx, cy, 5 + Math.sin(tt * 1.6) * 1.5, 0, Math.PI * 2)
-      ctx.fillStyle = '#e8322b'
-      ctx.fill()
-
-      if (!reduce && visible) raf = requestAnimationFrame(draw)
-    }
-
-    const io = new IntersectionObserver((entries) => {
-      visible = entries.some((e) => e.isIntersecting)
-      if (visible && !reduce && !raf) raf = requestAnimationFrame(draw)
-      if (!visible && raf) {
-        cancelAnimationFrame(raf)
-        raf = 0
-      }
-    })
-    io.observe(section)
-    resize()
-    const onResize = () => {
-      resize()
-      if (reduce) draw(0)
-    }
-    window.addEventListener('resize', onResize)
-    if (reduce) draw(0)
-    else raf = requestAnimationFrame(draw)
-
-    return () => {
-      io.disconnect()
-      window.removeEventListener('resize', onResize)
-      if (raf) cancelAnimationFrame(raf)
-    }
-  }, [])
+    window.dispatchEvent(new Event('resize'))
+  }, [pick])
 
   const titleLines = pick(home.title).split('\n')
 
   return (
-    <section className="mh" ref={sectionRef} aria-label="The Invention Lab manifesto">
-      <div className="mh__sticky">
-        <canvas className="mh__canvas" ref={canvasRef} aria-hidden />
+    <section className="mh" ref={sectionRef} aria-label="The Invention Lab">
+      <div className="mh__sticky" ref={stickyRef}>
         <div className="container mh__inner">
-          <p className="mh__eyebrow">
-            <span className="mh__dot" aria-hidden /> {pick(home.eyebrow)}
-          </p>
-          <h1 className="mh__title">
+          <h1 className="mh__title" ref={titleRef}>
             {titleLines.map((line, li) => (
               <span key={li} className="mh__line">
                 {line.split(' ').map((w, wi) => (
-                  <span key={wi} className={'mh__tw' + (li === titleLines.length - 1 ? ' is-key' : '')} style={{ animationDelay: `${(li * 4 + wi) * 70}ms` }}>
-                    {w}{' '}
+                  <span key={wi} className={'mh__tw' + (li === titleLines.length - 1 ? ' is-key' : '')} style={{ animationDelay: `${200 + (li * 5 + wi) * 90}ms` }}>
+                    {w}
+                    {wi < line.split(' ').length - 1 ? ' ' : ''}
                   </span>
                 ))}
               </span>
             ))}
           </h1>
-          <div className="mh__text" ref={textRef}>
-            {statements.map((_, si) => (
-              <p key={si}>
-                {words
-                  .map((x, i) => ({ ...x, i }))
-                  .filter((x) => x.si === si)
-                  .map((x) => (
-                    <span key={x.i} className={'mh__w' + (KEY.test(x.w) ? ' is-key' : '')} style={{ ['--i' as string]: x.i }}>
-                      {x.w}{' '}
-                    </span>
-                  ))}
-              </p>
-            ))}
+          <div className="mh__reveal">
+            <div className="mh__text" ref={textRef}>
+              {statements.map((_, si) => (
+                <p key={si}>
+                  {words
+                    .map((x, i) => ({ ...x, i }))
+                    .filter((x) => x.si === si)
+                    .map((x) => (
+                      <span key={x.i} className={'mh__w' + (KEY.test(x.w) ? ' is-key' : '')} style={{ ['--i' as string]: x.i }}>
+                        {x.w}{' '}
+                      </span>
+                    ))}
+                </p>
+              ))}
+            </div>
+            <div className="mh__ctas">
+              <Link to="/contact" className="btn btn--primary btn--lg">
+                {home.ctaPrimary} <Arrow />
+              </Link>
+              <Link to="/capabilities/venture-studio" className="m-link">
+                {home.ctaSecondary} <Arrow />
+              </Link>
+            </div>
           </div>
-          <div className="mh__ctas">
-            <Link to="/contact" className="btn btn--primary btn--lg">
-              {home.ctaPrimary} <Arrow />
-            </Link>
-            <Link to="/capabilities/venture-studio" className="m-link">
-              {home.ctaSecondary} <Arrow />
-            </Link>
-          </div>
-          <div className="mh__scroll" aria-hidden>
-            <span>Scroll</span>
-            <i />
-          </div>
+        </div>
+        <div className="mh__scroll" aria-hidden>
+          <i />
         </div>
       </div>
     </section>
