@@ -10,7 +10,8 @@
   --line-strong: #111111;
   --bg: #ffffff;
   --bg-soft: #f6f6f4;
-  --accent: #1f3cff;
+  --accent: #e8322b;
+  --accent-ink: #c4231d;
   --nav-h: 72px;
   --gutter: 40px;
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -67,7 +68,7 @@ main {
   min-height: 60vh;
 }
 ::selection {
-  background: var(--ink);
+  background: var(--accent);
   color: #fff;
 }
 :focus-visible {
@@ -113,12 +114,19 @@ main {
 .btn--block {
   width: 100%;
 }
-.btn--primary,
+.btn--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn--primary:hover {
+  background: var(--accent-ink);
+  border-color: var(--accent-ink);
+}
 .btn--dark {
   background: var(--ink);
   color: #fff;
 }
-.btn--primary:hover,
 .btn--dark:hover {
   background: var(--accent);
   border-color: var(--accent);
@@ -193,7 +201,7 @@ a:hover > .more {
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.04em;
-  color: var(--ink-3);
+  color: var(--accent);
   text-transform: uppercase;
 }
 .eyebrow--light {
@@ -228,6 +236,15 @@ a:hover > .more {
 }
 .logo__mark {
   display: none;
+}
+.logo__text::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  align-self: center;
+  margin-right: -2px;
 }
 .logo__text {
   display: flex;
@@ -346,7 +363,7 @@ a:hover > .more {
   color: var(--ink-3);
 }
 .lang-toggle button.is-active {
-  color: var(--ink);
+  color: var(--accent);
   text-decoration: underline;
   text-underline-offset: 4px;
 }
@@ -421,6 +438,9 @@ a:hover > .more {
 
 .m-numbers {
   border-top: 1px solid var(--line-strong);
+  position: relative;
+  z-index: 1;
+  background: var(--bg);
   border-bottom: 1px solid var(--line);
 }
 .m-numbers__grid {
@@ -462,7 +482,7 @@ a:hover > .more {
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.04em;
-  color: var(--ink-3);
+  color: var(--accent);
   padding-top: 10px;
   position: sticky;
   top: calc(var(--nav-h) + 24px);
@@ -519,7 +539,7 @@ a:hover > .more {
 }
 .m-list__no {
   font-size: 14px;
-  color: var(--ink-3);
+  color: var(--accent);
   font-variant-numeric: tabular-nums;
   padding-top: 3px;
 }
@@ -590,7 +610,7 @@ a:hover > .more {
 }
 .m-table__no {
   font-size: 14px;
-  color: var(--ink-3);
+  color: var(--accent);
   padding-top: 4px;
 }
 .m-table__main {
@@ -718,7 +738,7 @@ a:hover > .more {
   font-style: normal;
   font-size: 13px;
   text-align: right;
-  color: var(--ink);
+  color: var(--accent);
 }
 .m-companies a:hover strong,
 .m-news a:hover strong {
@@ -747,6 +767,170 @@ a:hover > .more {
   letter-spacing: -0.02em;
   line-height: 1.45;
   transition: color 0.2s;
+}
+
+/* ───────────────────────── Manifesto hero ───────────────────────── */
+.mh {
+  position: relative;
+  height: 340vh;
+  --p: 0;
+}
+.mh__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+.mh__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.mh__inner {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: calc(var(--nav-h) + 16px);
+  padding-bottom: 64px;
+}
+.mh__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink-2);
+  margin-bottom: min(28px, 3vh);
+}
+.mh__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: mh-pulse 2.4s ease-in-out infinite;
+}
+@keyframes mh-pulse {
+  50% {
+    box-shadow: 0 0 0 6px rgba(232, 50, 43, 0.18);
+  }
+}
+.mh__title {
+  font-size: clamp(40px, min(7.6vw, 10.5vh), 124px);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+  max-width: 1100px;
+}
+.mh__line {
+  display: block;
+}
+.mh__tw {
+  display: inline-block;
+  white-space: pre;
+  animation: mh-rise 0.9s var(--ease) both;
+}
+.mh__tw.is-key {
+  color: var(--accent);
+}
+@keyframes mh-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+  }
+}
+.mh__text {
+  --lit: 0;
+  margin-top: min(44px, 4.5vh);
+  max-width: 940px;
+  display: grid;
+  gap: 4px;
+  font-size: clamp(19px, min(2.4vw, 3.3vh), 36px);
+  font-weight: 500;
+  line-height: 1.32;
+  letter-spacing: -0.035em;
+}
+.mh__w {
+  opacity: clamp(0.14, calc(var(--lit) - var(--i)), 1);
+  transition: opacity 0.15s linear;
+}
+.mh__w.is-key {
+  color: var(--accent);
+}
+.mh__ctas {
+  margin-top: min(40px, 4vh);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  opacity: clamp(0, calc((var(--p) - 0.7) * 5), 1);
+  transform: translateY(calc((1 - clamp(0, calc((var(--p) - 0.7) * 5), 1)) * 16px));
+}
+.mh__scroll {
+  position: absolute;
+  left: var(--gutter);
+  bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  opacity: calc(1 - var(--p) * 4);
+}
+.mh__scroll i {
+  position: relative;
+  width: 64px;
+  height: 1px;
+  background: var(--line);
+  overflow: hidden;
+}
+.mh__scroll i::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 24px;
+  background: var(--accent);
+  animation: mh-scroll 1.8s var(--ease) infinite;
+}
+@keyframes mh-scroll {
+  from {
+    transform: translateX(-24px);
+  }
+  to {
+    transform: translateX(64px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mh__tw,
+  .mh__dot,
+  .mh__scroll i::after {
+    animation: none;
+  }
+}
+@media (max-width: 600px) {
+  .mh {
+    height: 300vh;
+  }
+  .mh__title {
+    font-size: clamp(44px, 12.5vw, 64px);
+  }
+  .mh__inner {
+    justify-content: flex-end;
+    padding-bottom: 88px;
+  }
+  .mh__text {
+    margin-top: 32px;
+  }
+  .mh__ctas {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
 }
 
 /* ───────────────────────── Page hero ───────────────────────── */
@@ -1297,12 +1481,12 @@ a:hover > .more {
   border-bottom: 1px solid var(--line);
 }
 .factory__cell--main .factory__card {
-  background: var(--ink);
+  background: var(--accent);
   color: #fff;
 }
 .factory__cell--main .factory__card p,
 .factory__cell--main .factory__k {
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, 0.8);
 }
 .factory__k {
   font-size: 12px;
@@ -1426,7 +1610,6 @@ a:hover > .more {
   align-items: flex-end;
   gap: 32px;
   flex-wrap: wrap;
-  padding: 0;
 }
 
 .program__head {
@@ -1746,7 +1929,7 @@ a.dual__card:hover h3 {
 }
 .td-strong {
   font-weight: 600;
-  color: var(--ink) !important;
+  color: var(--accent) !important;
 }
 
 .phases {
@@ -1930,10 +2113,10 @@ a.sea-card:hover strong {
   right: 0;
   font-size: 12px;
   font-weight: 500;
-  color: var(--ink);
+  color: var(--accent);
 }
 .stage--exit {
-  color: var(--ink);
+  color: var(--accent);
 }
 .load-more {
   display: flex;
@@ -2098,7 +2281,7 @@ a.sea-card:hover strong {
 .aside-card--cta {
   padding: 28px;
   border-top: 0;
-  background: var(--ink);
+  background: var(--accent);
   color: #fff;
 }
 .aside-card--cta .more {
@@ -2162,7 +2345,7 @@ a.sea-card:hover strong {
 }
 .chip.is-active {
   color: var(--ink);
-  border-bottom-color: var(--ink);
+  border-bottom-color: var(--accent);
 }
 .news-list {
   border-top: 1px solid var(--line-strong);
@@ -2330,8 +2513,8 @@ a.sea-card:hover strong {
   transition: border-color 0.2s, background 0.2s, color 0.2s;
 }
 .radio-chips label.is-active {
-  background: var(--ink);
-  border-color: var(--ink);
+  background: var(--accent);
+  border-color: var(--accent);
   color: #fff;
 }
 .radio-chips input,
@@ -2369,8 +2552,8 @@ a.sea-card:hover strong {
   line-height: 1.5;
 }
 .track.is-active {
-  border-color: var(--ink);
-  box-shadow: inset 0 0 0 1px var(--ink);
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
 }
 .form-grid {
   display: grid;
@@ -2439,7 +2622,7 @@ a.sea-card:hover strong {
 /* ───────────────────────── CTA band / Footer ───────────────────────── */
 .cta-band {
   padding: 140px 0;
-  background: var(--ink);
+  background: var(--accent);
   color: #fff;
 }
 .cta-band__glow {
@@ -2462,7 +2645,7 @@ a.sea-card:hover strong {
 .cta-band p {
   grid-column: 1;
   font-size: 18px;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.82);
 }
 .cta-band .btn {
   grid-column: 2;
@@ -2473,8 +2656,8 @@ a.sea-card:hover strong {
   border-color: #fff;
 }
 .cta-band .btn:hover {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--ink);
+  border-color: var(--ink);
   color: #fff;
 }
 .footer {

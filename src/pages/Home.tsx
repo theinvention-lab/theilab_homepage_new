@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang } from '../i18n'
 import { Arrow, Reveal } from '../components/ui'
+import ManifestoHero from '../components/ManifestoHero'
 import { Lines } from '../components/Rich'
 import { Thumb } from '../components/cards'
 import { home, keyNumbers } from '../data/copy'
@@ -29,25 +30,7 @@ export default function Home() {
 
   return (
     <>
-      <section className="m-hero">
-        <div className="container">
-          <p className="m-hero__eyebrow">{pick(home.eyebrow)}</p>
-          <h1 className="m-hero__title">
-            <Lines text={pick(home.title)} />
-          </h1>
-          <div className="m-hero__foot">
-            <p className="m-hero__sub">{pick(home.sub)}</p>
-            <div className="m-hero__links">
-              <Link to="/contact" className="m-link">
-                {home.ctaPrimary} <Arrow />
-              </Link>
-              <Link to="/capabilities/venture-studio" className="m-link m-link--muted">
-                {home.ctaSecondary} <Arrow />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <ManifestoHero />
 
       <section className="m-numbers">
         <div className="container m-numbers__grid">
