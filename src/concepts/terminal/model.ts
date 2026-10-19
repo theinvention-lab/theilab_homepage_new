@@ -149,8 +149,9 @@ export function fuzzyScore(hay: string, title: string, q: string): number | null
   if (ti >= 0) return 800 - ti
   const hi = hay.indexOf(q)
   if (hi >= 0) return 500 - Math.min(hi, 400)
-  // subsequence over title + hay
-  const src = t + ' ' + hay
+  // subsequence over the title only (ascii queries; hangul subsequences are too loose)
+  if (!/^[\x20-\x7e]+$/.test(q)) return null
+  const src = t
   let j = 0
   let gaps = 0
   let last = -1
@@ -161,7 +162,7 @@ export function fuzzyScore(hay: string, title: string, q: string): number | null
       j++
     }
   }
-  if (j < q.length || q.length < 2) return null
+  if (j < q.length || q.length < 2 || gaps > q.length * 3) return null
   const s = 300 - gaps
   return s > 0 ? s : null
 }
