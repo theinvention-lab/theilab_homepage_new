@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -19,9 +19,9 @@ import NotFound from './pages/NotFound'
 import Concepts from './pages/Concepts'
 import ConceptBar from './concepts/ConceptBar'
 import './concepts/concept-bar.css'
-import EditorialConcept from './concepts/editorial'
-import TerminalConcept from './concepts/terminal'
-import BentoConcept from './concepts/bento'
+const EditorialConcept = lazy(() => import('./concepts/editorial'))
+const TerminalConcept = lazy(() => import('./concepts/terminal'))
+const BentoConcept = lazy(() => import('./concepts/bento'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -37,12 +37,14 @@ export default function App() {
     return (
       <>
         <ScrollToTop />
+        <Suspense fallback={<div style={{ minHeight: '100vh' }} />}>
         <Routes>
           <Route path="/c/editorial" element={<EditorialConcept />} />
           <Route path="/c/terminal" element={<TerminalConcept />} />
           <Route path="/c/bento" element={<BentoConcept />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </Suspense>
         <ConceptBar />
       </>
     )
