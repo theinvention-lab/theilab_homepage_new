@@ -72,8 +72,8 @@ export function PageHero({
 
 export function Arrow() {
   return (
-    <svg className="arrow" width="16" height="16" viewBox="0 0 16 16" aria-hidden>
-      <path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    <svg className="arrow" width="12" height="12" viewBox="0 0 12 12" aria-hidden style={{ marginLeft: 2 }}>
+      <path d="M4.5 2.5L8 6l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }

@@ -7,11 +7,11 @@ import { newsCategoryLabel, type NewsItem } from '../data/news'
 import { Arrow, ExternalIcon } from './ui'
 
 const gradients = [
-  'linear-gradient(135deg,#1b3a8a,#3a6df0)',
-  'linear-gradient(135deg,#ff5a36,#ff9a3c)',
-  'linear-gradient(135deg,#0f766e,#22c1a3)',
-  'linear-gradient(135deg,#5b21b6,#9b6bff)',
-  'linear-gradient(135deg,#0b1b3f,#2c4a8a)',
+  'linear-gradient(160deg,#e8f1ff,#cfe1fb)',
+  'linear-gradient(160deg,#fff1e6,#fbd9c2)',
+  'linear-gradient(160deg,#e9f7ee,#cdebd7)',
+  'linear-gradient(160deg,#f3ecff,#ddd0f7)',
+  'linear-gradient(160deg,#f5f5f7,#dcdce1)',
 ]
 
 export function Thumb({ src, label, seed = 0 }: { src?: string; label: string; seed?: number }) {
