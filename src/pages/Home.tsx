@@ -43,60 +43,41 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="jv">
-        <div className="container">
-          <Reveal className="jv__head">
-            <span className="jv__eyebrow">{home.journeyEyebrow}</span>
-            <h2 className="jv__title">
-              <Lines text={pick(home.journeyTitle)} />
-            </h2>
-          </Reveal>
-
-          <div className="jv__track">
-            <div className="jv__meta">
-              <span>{home.journeyLabel}</span>
-              <span>{home.journeyPeriod}</span>
-            </div>
-            <ol className="jv__steps">
-              {home.journey.map((j, i) => (
-                <li key={j.title.ko} className="jv__step">
-                  <Reveal delay={i * 120}>
-                    <span className="jv__dot" aria-hidden />
-                    <span className="jv__no">{String(i + 1).padStart(2, '0')}</span>
-                    <h3>{pick(j.title)}</h3>
-                    <p>{pick(j.desc)}</p>
-                  </Reveal>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          <div className="jv__next-connector" aria-hidden>
-            <span className="jv__next-line" />
-            <span className="jv__next-label">{home.nextChapter.label}</span>
-            <span className="jv__next-arrow" />
-          </div>
-
-          <Reveal>
-            <Link to="/capabilities/venture-studio" className="jv__next">
-              <span className="jv__next-tag">{home.nextChapter.tag}</span>
-              <span className="jv__next-title">{home.nextChapter.title}</span>
-              <span className="jv__next-desc">{pick(home.nextChapter.desc)}</span>
-              <span className="jv__next-pills">
-                {home.nextChapter.pills.map((p) => (
-                  <span key={p.title.ko}>
-                    <b>{pick(p.title)}</b>
-                    {pick(p.desc)}
-                  </span>
-                ))}
+      <Row label={home.journeyEyebrow}>
+        <Reveal>
+          <p className="m-statement">
+            <Lines text={pick(home.journeyTitle)} />
+          </p>
+        </Reveal>
+        <ol className="m-list m-list--numbered">
+          {home.journey.map((j, i) => (
+            <li key={j.title.ko}>
+              <span className="m-list__no">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{pick(j.title)}</h3>
+                <p>{pick(j.desc)}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <Link to="/capabilities/venture-studio" className="m-feature">
+          <span className="m-feature__label">
+            {home.nextChapter.label} · {home.nextChapter.tag}
+          </span>
+          <span className="m-feature__title">{home.nextChapter.title}</span>
+          <span className="m-feature__desc">{pick(home.nextChapter.desc)}</span>
+          <span className="m-feature__pills">
+            {home.nextChapter.pills.map((p) => (
+              <span key={p.title.ko}>
+                <b>{pick(p.title)}</b> {pick(p.desc)}
               </span>
-              <span className="m-link">
-                {home.nextChapter.cta} <Arrow />
-              </span>
-            </Link>
-          </Reveal>
-        </div>
-      </section>
+            ))}
+          </span>
+          <span className="m-link">
+            {home.nextChapter.cta} <Arrow />
+          </span>
+        </Link>
+      </Row>
 
       <Row label={home.whatEyebrow}>
         <h3 className="m-title">{home.whatTitle}</h3>
