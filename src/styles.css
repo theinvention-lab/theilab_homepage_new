@@ -1,29 +1,35 @@
 /* ═════════════════════════════════════════════════════════════
    The Invention Lab — 디자인 시스템
-   primary/foreground #000 · canvas #fff · surface #f7f7f7 · muted #707070 · border #ddd
-   pill CTA(20px, 40px 높이, 14px/700) · 그림자 없음 · 포커스는 2px 점선 검정 아웃라인
+   canvas #fff · ink #1c1c1c / #2e2e2e · muted #8c8c8c (hover #595959) · hairline #e5e5e5
+   brand green #03c75a(정체성·주요 액션) · CTA fill #03a94d · link #0c43b7
+   System 폰트 · -0.4px 자간 · 4/8/12/16/20 간격 · radius 4/8/12/full · 그림자 최소
    ═════════════════════════════════════════════════════════════ */
 :root {
-  --ink: #000000;
-  --ink-2: #444444;
-  --ink-3: #707070;
-  --line: #dddddd;
-  --line-strong: #000000;
+  --ink: #1c1c1c;
+  --ink-ui: #2e2e2e;
+  --ink-2: #595959;
+  --ink-3: #8c8c8c;
+  --line: #e5e5e5;
+  --line-strong: #1c1c1c;
   --bg: #ffffff;
-  --bg-soft: #f7f7f7;
-  /* UI 강조색은 primary(검정). 브랜드 레드는 로고·히어로 키워드·CTA 밴드에만 사용 */
-  --accent: #000000;
+  --bg-soft: #f5f6f7;
+  --bg-tint: linear-gradient(180deg, rgb(236, 247, 252), rgb(232, 249, 245));
+  --accent: #1c1c1c;
   --accent-ink: #000000;
-  --brand: #e8322b;
-  --brand-ink: #c4231d;
-  --nav-active: #006bea;
-  --radius-pill: 20px;
-  --radius-chip: 40px;
-  --radius-card: 20px;
+  --brand: #03c75a;
+  --brand-fill: #03a94d;
+  --link: #0c43b7;
+  --corp-ink: #1a1d24;
+  --corp-muted: #717680;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+  --radius-card: 12px;
   --nav-h: 72px;
   --gutter: 40px;
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --font: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Segoe UI', sans-serif;
+  --font: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', 'Noto Sans KR', 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 
 *,
@@ -42,7 +48,7 @@ body {
   background: var(--bg);
   font-size: 16px;
   line-height: 1.6;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.4px;
   word-break: keep-all;
   overflow-wrap: anywhere;
   -webkit-font-smoothing: antialiased;
@@ -65,7 +71,7 @@ h2,
 h3,
 h4 {
   margin: 0;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.2;
   letter-spacing: -0.03em;
 }
@@ -76,13 +82,10 @@ main {
   min-height: 60vh;
 }
 ::selection {
-  background: var(--ink);
+  background: var(--brand);
   color: #fff;
 }
-:focus-visible {
-  outline: 2px dotted #000000;
-  outline-offset: 1px;
-}
+/* 포커스는 브라우저 기본 링(outline: auto)을 그대로 사용 */
 
 .container {
   width: 100%;
@@ -96,68 +99,87 @@ main {
 
 /* ───────────────────────── Primitives ───────────────────────── */
 .btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  height: 40px;
-  min-height: 40px;
-  padding: 10px 24px 9px;
-  border: 1px solid var(--ink);
-  border-radius: var(--radius-pill);
-  background: none;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 19px;
-  letter-spacing: -0.02em;
+  height: 48px;
+  padding: 0 24px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--ink-ui);
+  font-size: 14.7px;
+  font-weight: 500;
+  line-height: 17.85px;
+  letter-spacing: -0.4px;
   white-space: nowrap;
-  transition: background-color 0.2s linear, border-color 0.2s linear, color 0.2s linear;
-}
-.btn:focus-visible {
-  outline-offset: 0;
 }
 .btn--sm {
-  height: 32px;
-  min-height: 32px;
-  padding: 6px 16px;
+  height: 36px;
+  padding: 0 14px;
   font-size: 13px;
 }
 .btn--lg {
-  padding: 10px 24px 9px;
+  height: 56px;
+  padding: 0 32px;
 }
 .btn--block {
   width: 100%;
 }
-/* contained CTA: 검정 pill, 포인터 상태 변화 없음 */
+/* 주요 CTA: #03a94d 채움, 녹색 틴트 그림자, hover 시 그림자 진하게 + 6% 어둡게 */
 .btn--primary,
 .btn--dark {
-  background: #000;
-  border-color: #000;
+  background: var(--brand-fill);
+  border-color: rgba(0, 0, 0, 0.06);
   color: #fff;
-  transition: none;
+  box-shadow: 0 2px 4px rgba(3, 199, 90, 0.12);
 }
-/* outlined CTA: hover/pressed 시 검정으로 반전 */
+.btn--primary::before,
+.btn--dark::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(0, 0, 0, 0.06);
+  opacity: 0;
+  pointer-events: none;
+}
+.btn--primary:hover,
+.btn--primary:active,
+.btn--dark:hover,
+.btn--dark:active {
+  box-shadow: 0 2px 4px rgba(3, 199, 90, 0.24);
+}
+.btn--primary:hover::before,
+.btn--primary:active::before,
+.btn--dark:hover::before,
+.btn--dark:active::before {
+  opacity: 1;
+}
+/* 보조 버튼: 흰 바탕 + 옅은 테두리, hover 시 6% 회색 + 그림자 */
 .btn--ghost,
 .btn--outline-light {
-  background: transparent;
-  color: var(--ink);
+  background: #fff;
+  color: var(--ink-ui);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 .btn--ghost:hover,
 .btn--ghost:active,
 .btn--outline-light:hover,
 .btn--outline-light:active {
-  background: #000;
-  border-color: #000;
-  color: #fff;
+  background: rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
 }
-/* white contained CTA (어두운/컬러 배경 위) */
 .btn--white {
   background: #fff;
-  border-color: #fff;
-  color: #000;
-  padding: 10px 24px 11px;
-  letter-spacing: -0.28px;
-  transition: none;
+  border-color: rgba(0, 0, 0, 0.06);
+  color: var(--ink);
+}
+.btn--white:hover,
+.btn--white:active {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
 }
 .arrow {
   transition: transform 0.25s var(--ease);
@@ -167,35 +189,26 @@ button:hover .arrow {
   transform: translateX(3px);
 }
 
-/* underlined CTA: 1px ::after 바, pressed 시 글자만 70% */
+/* 텍스트 링크: #0c43b7, hover 시 밑줄 */
 .more,
 .m-link {
-  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--ink);
-  padding-bottom: 2px;
-  line-height: 19px;
+  gap: 4px;
+  font-size: 14.7px;
+  font-weight: 600;
+  color: var(--link);
+  line-height: 17.85px;
+  letter-spacing: -0.4px;
 }
-.more::after,
-.m-link::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background: #000;
+.m-link:hover,
+.more:hover,
+a:hover > .more {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 .m-link--muted {
   color: var(--ink-3);
-}
-.m-link:active,
-.more:active {
-  color: rgba(0, 0, 0, 0.7);
 }
 .inline-link {
   color: var(--ink);
@@ -281,39 +294,21 @@ button:hover .arrow {
   gap: 4px;
   flex: 1;
 }
-/* GNB 링크: 16px/700 검정, hover·pressed·focus 시 #006bea + 2px 바 */
+/* 헤더 내비게이션: 16px/400 #1a1d24, hover·pressed 시 굵기 600 */
 .nav__link {
-  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  height: 47px;
-  padding: 14px 12px;
+  padding: 8px 14px;
   font-size: 16px;
-  font-weight: 700;
-  color: var(--ink);
-}
-.nav__link::before {
-  content: '';
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 0;
-  height: 2px;
-  background: var(--nav-active);
-  opacity: 0;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  color: var(--corp-ink);
 }
 .nav__link:hover,
 .nav__link:active,
-.nav__link:focus-visible,
 .nav__group:hover > .nav__link {
-  color: var(--nav-active);
-}
-.nav__link:hover::before,
-.nav__link:active::before,
-.nav__link:focus-visible::before,
-.nav__group:hover > .nav__link::before {
-  opacity: 1;
+  font-weight: 600;
 }
 .nav__caret {
   opacity: 0.5;
@@ -353,7 +348,7 @@ button:hover .arrow {
   color: var(--ink-2);
 }
 .nav__sublink:hover {
-  color: var(--nav-active);
+  color: var(--ink);
   background: var(--bg-soft);
 }
 .nav__mobile-extra {
@@ -374,7 +369,8 @@ button:hover .arrow {
 }
 .header .btn--ghost:hover {
   background: none;
-  color: var(--nav-active);
+  box-shadow: none;
+  color: var(--ink);
 }
 .lang-toggle {
   display: inline-flex;
@@ -622,7 +618,7 @@ button:hover .arrow {
 }
 
 .m-list__next {
-  background: var(--bg-soft);
+  background: var(--bg-tint);
   border-radius: var(--radius-card);
   border-bottom-color: transparent !important;
   margin-top: 16px;
@@ -760,7 +756,7 @@ button:hover .arrow {
   height: 10px;
   margin-left: -5px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--brand);
 }
 /* 중심과 4요소를 잇는 십자선 */
 .m-orbit__axis,
@@ -792,7 +788,7 @@ button:hover .arrow {
   text-align: center;
   padding: 16px;
   color: #fff;
-  background: #000;
+  background: var(--brand);
   z-index: 2;
 }
 .m-orbit__center span {
@@ -2576,14 +2572,16 @@ a.sea-card:hover strong {
 .chip {
   border: 0;
   background: none;
-  padding: 4px 0;
-  font-size: 18px;
-  font-weight: 700;
+  padding: 6px 0 14px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 21px;
+  letter-spacing: -0.3px;
   color: var(--ink-3);
   border-bottom: 2px solid transparent;
 }
 .chip:hover {
-  color: var(--ink);
+  color: var(--ink-2);
 }
 .chip.is-active {
   color: var(--ink);
@@ -2868,8 +2866,8 @@ a.sea-card:hover strong {
   padding: 140px 0;
   color: #fff;
   background:
-    radial-gradient(120% 140% at 100% 0%, #ff6a4d 0%, rgba(255, 106, 77, 0) 55%),
-    linear-gradient(120deg, #a5150f 0%, var(--brand) 48%, #f0503a 100%);
+    radial-gradient(120% 140% at 100% 0%, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 55%),
+    linear-gradient(120deg, var(--brand-fill) 0%, var(--brand) 100%);
 }
 .cta-band__inner {
   display: flex;
