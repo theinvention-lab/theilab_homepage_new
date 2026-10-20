@@ -10,16 +10,12 @@ const capabilityLinks = [
   { to: '/capabilities/global-expansion', label: 'Global Expansion' },
 ]
 
+const LOGO_URL = 'https://storage.googleapis.com/inventionlab-homepage-assets/The_Invention_Lab_Logo-01.jpg'
+
 export function Logo({ light }: { light?: boolean }) {
   return (
     <span className={'logo' + (light ? ' logo--light' : '')}>
-      <span className="logo__mark" aria-hidden>
-        TIL
-      </span>
-      <span className="logo__text">
-        The Invention Lab
-        <small>더인벤션랩</small>
-      </span>
+      <img className="logo__img" src={LOGO_URL} alt="The Invention Lab" />
     </span>
   )
 }

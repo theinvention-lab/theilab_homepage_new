@@ -7,6 +7,9 @@ type Item = { title: L10n; desc: L10n }
 export const home = {
   eyebrow: { ko: 'Venture Studio for Startup & Corporates', en: 'Venture Studio for Startups & Corporates' } as L10n,
   title: { ko: 'We build new ventures with\nentrepreneurs', en: 'We build new ventures with\nentrepreneurs' } as L10n,
+  /** 메인 히어로: 고정 문구 + 타이핑으로 바뀌는 마지막 키워드 */
+  titleLead: 'We build new ventures with',
+  titleKeywords: ['corporations', 'entrepreneurs', 'opportunities', 'innovations'],
   sub: { ko: '새로운 사업을 설계하고 성장 단계까지 이끄는 벤처 빌딩 파트너', en: 'A Venture Building Partner Designing and Guiding New Businesses to Growth' } as L10n,
   ctaPrimary: 'Start a Venture Project',
   ctaSecondary: 'Explore Our Venture Studio Model',

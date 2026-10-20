@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang } from '../i18n'
 import { home, studio } from '../data/copy'
@@ -10,9 +10,58 @@ const KEY = /^(Venture|Studio|Studio로서|벤처|빌딩|구조와|과정으로|
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v))
 const ease = (t: number) => 1 - Math.pow(1 - t, 3)
 
+/** 키워드를 타이핑하듯 쓰고 지우기를 반복. 시작 전에는 커서만 깜박임 */
+function TypeSlot({ active, words }: { active: boolean; words: string[] }) {
+  const [text, setText] = useState('')
+  useEffect(() => {
+    if (!active) return
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    let i = 0
+    let n = 0
+    let deleting = false
+    let timer = 0
+    const tick = () => {
+      const w = words[i]
+      if (reduce) {
+        setText(w)
+        i = (i + 1) % words.length
+        timer = window.setTimeout(tick, 2200)
+        return
+      }
+      if (!deleting) {
+        n++
+        setText(w.slice(0, n))
+        if (n >= w.length) {
+          deleting = true
+          timer = window.setTimeout(tick, 1700)
+        } else timer = window.setTimeout(tick, 70 + Math.random() * 60)
+      } else {
+        n--
+        setText(w.slice(0, n))
+        if (n <= 0) {
+          deleting = false
+          i = (i + 1) % words.length
+          timer = window.setTimeout(tick, 380)
+        } else timer = window.setTimeout(tick, 36)
+      }
+    }
+    timer = window.setTimeout(tick, 200)
+    return () => window.clearTimeout(timer)
+  }, [active, words])
+
+  return (
+    <span className={'mh__slot' + (active ? ' is-on' : '')} aria-label={words.join(', ')}>
+      <span className="mh__typed" aria-hidden>
+        {text || '\u200b'}
+      </span>
+      <i className="mh__caret" aria-hidden />
+    </span>
+  )
+}
+
 /**
- * 1) 첫 화면: 흰 배경 정중앙에 영문 타이틀만 표시 (헤더 숨김)
- * 2) 스크롤: 타이틀이 좌상단 본래 자리로 이동하며 메인 화면이 드러남
+ * 1) 첫 화면: 흰 배경 정중앙(가운데 정렬)에 영문 타이틀만 표시, 마지막 자리엔 커서가 깜박임 (헤더 숨김)
+ * 2) 스크롤: 타이틀이 좌상단 본래 자리로 이동하며 메인 화면이 드러나고, 키워드가 타이핑됨
  * 3) 계속 스크롤: 매니페스토 문장이 한 단어씩 채워지고 CTA가 나타남
  */
 export default function ManifestoHero() {
@@ -21,6 +70,9 @@ export default function ManifestoHero() {
   const stickyRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const textRef = useRef<HTMLDivElement>(null)
+  const slotLineRef = useRef<HTMLSpanElement>(null)
+  const [typing, setTyping] = useState(false)
+  const typingRef = useRef(false)
 
   const statements = [
     pick(home.sub),
@@ -35,7 +87,8 @@ export default function ManifestoHero() {
     const sticky = stickyRef.current
     const title = titleRef.current
     const text = textRef.current
-    if (!section || !sticky || !title || !text) return
+    const slotLine = slotLineRef.current
+    if (!section || !sticky || !title || !text || !slotLine) return
     const root = document.documentElement
     let raf = 0
     // 변형 전 타이틀의 실제 글자 영역 (리사이즈/폰트 로딩 때만 측정)
@@ -72,6 +125,15 @@ export default function ManifestoHero() {
       const dy = (H - box.h * scale0) / 2 - box.y
       const k = 1 - intro
       title.style.transform = `translate(${(dx * k).toFixed(1)}px, ${(dy * k).toFixed(1)}px) scale(${(1 + (scale0 - 1) * k).toFixed(4)})`
+      // 인트로에서는 커서 줄도 가운데 정렬
+      const slotW = (slotLine.firstElementChild as HTMLElement | null)?.offsetWidth ?? 0
+      slotLine.style.transform = `translateX(${(((box.w - slotW) / 2) * k).toFixed(1)}px)`
+
+      // 스크롤을 시작하면 키워드 타이핑 시작
+      if (p > 0.01 && !typingRef.current) {
+        typingRef.current = true
+        setTyping(true)
+      }
 
       // ② 단어 채우기 (0.24 ~ 0.84)
       const lit = clamp01((p - 0.24) / 0.6) * (total + 2)
@@ -109,23 +171,24 @@ export default function ManifestoHero() {
     window.dispatchEvent(new Event('resize'))
   }, [pick])
 
-  const titleLines = pick(home.title).split('\n')
+  const lead = home.titleLead.split(' ')
 
   return (
     <section className="mh" ref={sectionRef} aria-label="The Invention Lab">
       <div className="mh__sticky" ref={stickyRef}>
         <div className="container mh__inner">
           <h1 className="mh__title" ref={titleRef}>
-            {titleLines.map((line, li) => (
-              <span key={li} className="mh__line">
-                {line.split(' ').map((w, wi) => (
-                  <span key={wi} className={'mh__tw' + (li === titleLines.length - 1 ? ' is-key' : '')} style={{ animationDelay: `${200 + (li * 5 + wi) * 90}ms` }}>
-                    {w}
-                    {wi < line.split(' ').length - 1 ? ' ' : ''}
-                  </span>
-                ))}
-              </span>
-            ))}
+            <span className="mh__line">
+              {lead.map((w, wi) => (
+                <span key={wi} className="mh__tw" style={{ animationDelay: `${200 + wi * 90}ms` }}>
+                  {w}
+                  {wi < lead.length - 1 ? ' ' : ''}
+                </span>
+              ))}
+            </span>
+            <span className="mh__line mh__line--slot" ref={slotLineRef}>
+              <TypeSlot active={typing} words={home.titleKeywords} />
+            </span>
           </h1>
           <div className="mh__reveal">
             <div className="mh__text" ref={textRef}>

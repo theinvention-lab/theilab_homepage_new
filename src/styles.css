@@ -233,33 +233,20 @@ a:hover > .more {
   align-items: center;
   color: var(--ink);
 }
-.logo__mark {
-  display: none;
+.logo__img {
+  display: block;
+  height: 58px;
+  width: auto;
+  /* JPG의 흰 배경이 밝은 배경 위에서 보이지 않도록 */
+  mix-blend-mode: multiply;
 }
-.logo__text::before {
-  content: '';
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--accent);
-  align-self: center;
-  margin-right: -2px;
+.footer .logo__img {
+  height: 72px;
 }
-.logo__text {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-.logo__text small {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0;
-  color: var(--ink-3);
-  text-transform: none;
+@media (max-width: 600px) {
+  .logo__img {
+    height: 46px;
+  }
 }
 .nav {
   display: flex;
@@ -793,17 +780,45 @@ a:hover > .more {
   padding-bottom: 64px;
 }
 .mh__title {
-  font-size: clamp(40px, min(7.6vw, 10.5vh), 124px);
+  font-size: clamp(40px, min(6.3vw, 10.5vh), 112px);
   font-weight: 600;
   line-height: 0.98;
   letter-spacing: -0.055em;
-  max-width: 1100px;
+  max-width: 100%;
   align-self: flex-start;
   transform-origin: 0 0;
   will-change: transform;
 }
 .mh__line {
   display: block;
+}
+@media (min-width: 861px) {
+  .mh__line:first-child {
+    white-space: nowrap;
+  }
+}
+/* 타이핑 키워드 자리 (시작 전에는 커서만 깜박임) */
+.mh__slot {
+  display: inline-block;
+  color: var(--accent);
+  white-space: pre;
+}
+.mh__caret {
+  display: inline-block;
+  width: 0.06em;
+  height: 0.8em;
+  margin-left: 0.05em;
+  vertical-align: -0.03em;
+  background: var(--accent);
+  animation: mh-caret 1.05s steps(1) infinite;
+}
+.mh__slot:not(.is-on) .mh__caret {
+  margin-left: 0;
+}
+@keyframes mh-caret {
+  50% {
+    opacity: 0;
+  }
 }
 .mh__tw {
   display: inline-block;
@@ -2910,9 +2925,6 @@ a.sea-card:hover strong {
 @media (max-width: 600px) {
   :root {
     --gutter: 20px;
-  }
-  .logo__text small {
-    display: none;
   }
   .m-hero {
     padding: calc(var(--nav-h) + 72px) 0 64px;
