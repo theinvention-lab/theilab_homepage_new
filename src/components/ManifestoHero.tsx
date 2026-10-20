@@ -60,7 +60,7 @@ function TypeSlot({ active, words }: { active: boolean; words: string[] }) {
 }
 
 /**
- * 1) 첫 화면: 흰 배경 정중앙(가운데 정렬)에 영문 타이틀만 표시, 마지막 자리엔 커서가 깜박임 (헤더 숨김)
+ * 1) 첫 화면: 흰 배경 정중앙(가운데 정렬)에 영문 타이틀만 표시, 다음 줄 좌측에 커서가 깜박임 (헤더 숨김)
  * 2) 스크롤: 타이틀이 좌상단 본래 자리로 이동하며 메인 화면이 드러나고, 키워드가 타이핑됨
  * 3) 계속 스크롤: 매니페스토 문장이 한 단어씩 채워지고 CTA가 나타남
  */
@@ -70,7 +70,6 @@ export default function ManifestoHero() {
   const stickyRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const textRef = useRef<HTMLDivElement>(null)
-  const slotLineRef = useRef<HTMLSpanElement>(null)
   const [typing, setTyping] = useState(false)
   const typingRef = useRef(false)
 
@@ -87,8 +86,7 @@ export default function ManifestoHero() {
     const sticky = stickyRef.current
     const title = titleRef.current
     const text = textRef.current
-    const slotLine = slotLineRef.current
-    if (!section || !sticky || !title || !text || !slotLine) return
+    if (!section || !sticky || !title || !text) return
     const root = document.documentElement
     let raf = 0
     // 변형 전 타이틀의 실제 글자 영역 (리사이즈/폰트 로딩 때만 측정)
@@ -125,9 +123,6 @@ export default function ManifestoHero() {
       const dy = (H - box.h * scale0) / 2 - box.y
       const k = 1 - intro
       title.style.transform = `translate(${(dx * k).toFixed(1)}px, ${(dy * k).toFixed(1)}px) scale(${(1 + (scale0 - 1) * k).toFixed(4)})`
-      // 인트로에서는 커서 줄도 가운데 정렬
-      const slotW = (slotLine.firstElementChild as HTMLElement | null)?.offsetWidth ?? 0
-      slotLine.style.transform = `translateX(${(((box.w - slotW) / 2) * k).toFixed(1)}px)`
 
       // 스크롤을 시작하면 키워드 타이핑 시작
       if (p > 0.01 && !typingRef.current) {
@@ -186,7 +181,7 @@ export default function ManifestoHero() {
                 </span>
               ))}
             </span>
-            <span className="mh__line mh__line--slot" ref={slotLineRef}>
+            <span className="mh__line mh__line--slot">
               <TypeSlot active={typing} words={home.titleKeywords} />
             </span>
           </h1>

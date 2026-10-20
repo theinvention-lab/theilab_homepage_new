@@ -15,8 +15,8 @@ export const home = {
   ctaSecondary: 'Explore Our Venture Studio Model',
   journeyEyebrow: 'JOURNEY & VISION',
   journeyTitle: {
-    ko: '더인벤션랩은 8년간의 오픈이노베이션 역량을 토대로,\nVenture Studio로서 새로운 비즈니스와 성장 기회를 설계합니다.',
-    en: 'Based on 8 years of Open Innovation leadership,\nThe Invention Lab designs new businesses and growth opportunities as a Venture Studio.',
+    ko: '더인벤션랩은 8년간의 오픈이노베이션 역량을 토대로,\n새로운 비즈니스와 성장 기회를 설계합니다.',
+    en: 'Based on 8 years of Open Innovation leadership,\nThe Invention Lab designs new businesses and growth opportunities.',
   } as L10n,
   journeyLabel: 'TIL’s Journey',
   journeyPeriod: '2017 — PRESENT',
@@ -48,7 +48,7 @@ export const home = {
     tag: 'VENTURE STUDIO MODEL',
     title: 'Venture Studio for Corporates',
     desc: {
-      ko: '급변하는 AI 기술과 기업 환경 변화에 대응하기 위해, 기존의 오픈이노베이션을 넘어선 벤처 스튜디오로 진화합니다.',
+      ko: '급변하는 AI 기술과 기업 환경 변화에 대응하기 위해, 기존의 오픈이노베이션을 넘어 벤처 스튜디오로 진화하고 있습니다.',
       en: 'To respond to rapidly changing AI technologies and corporate environments, we are evolving beyond traditional Open Innovation into a Venture Studio.',
     } as L10n,
     pills: [
